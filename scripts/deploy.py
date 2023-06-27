@@ -9,14 +9,14 @@ def deploy_fund_me():
     if network.show_active() != 'development':
         price_feed_address = config['networks'][network.show_active()]['eth_usd_price_feed']
     
-    fund_me = FundMe.deploy({'from': account}, publish_source=True)
+    fund_me = FundMe.deploy({'from': account}, publish_source=False)
     print(f"contract deployed to {fund_me.address}")
     print("contract deployed to {}".format(fund_me.address))
 
 
 def get_account():
     print('get_account')
-    print(network.show_active())
+    print('active network:', network.show_active())
     if network.show_active() == 'development':
         return accounts[0]  # local ganache accounts
     else:
@@ -24,4 +24,5 @@ def get_account():
 
 
 def main():
+    print('running main()')
     deploy_fund_me()

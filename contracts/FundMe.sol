@@ -2,7 +2,7 @@
 
 // Smart contract that lets anyone deposit ETH into the contract
 // Only the owner of the contract can withdraw the ETH
-pragma solidity >=0.6.6 <0.9.0;
+pragma solidity ^0.8.7;
 
 // Get the latest ETH/USD price from chainlink price feed
 
@@ -25,8 +25,8 @@ contract FundMe {
 
     // the first person to deploy the contract is
     // the owner
-    constructor(address _priceFeed) public {
-    priceFeed = AggregatorV3Interface(_priceFeed);
+    constructor() public {
+        priceFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
         owner = msg.sender;
     }
 
