@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "brownie-fund-me"
+version = "0.1.0"
+description = ""
+authors = ["rich <rkba2@outlook.com>"]
+readme = "README.md"
+packages = [{include = "brownie_fund_me"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+solc-select = "^1.0.3"
+solc = "^0.0.0a0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
