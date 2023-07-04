@@ -7,9 +7,11 @@ readme = "README.md"
 packages = [{include = "brownie_fund_me"}]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.10,<3.11"
 solc-select = "^1.0.3"
 solc = "^0.0.0a0"
+brownie = "^0.5.1"
+eth-brownie = "^1.19.3"
 
 
 [build-system]

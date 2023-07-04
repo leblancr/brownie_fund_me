@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.6.0;
 
-import "../../interfaces/AggregatorV2V3Interface.sol";
+import "@chainlink/contracts/src/v0.6/interfaces/AggregatorV2V3Interface.sol";
 
 /**
  * @title MockV3Aggregator
@@ -12,7 +12,7 @@ import "../../interfaces/AggregatorV2V3Interface.sol";
  * its answer is unimportant
  */
 contract MockV3Aggregator is AggregatorV2V3Interface {
-  uint256 public constant override version = 0;
+  uint256 constant public override version = 0;
 
   uint8 public override decimals;
   int256 public override latestAnswer;
@@ -23,12 +23,17 @@ contract MockV3Aggregator is AggregatorV2V3Interface {
   mapping(uint256 => uint256) public override getTimestamp;
   mapping(uint256 => uint256) private getStartedAt;
 
-  constructor(uint8 _decimals, int256 _initialAnswer) {
+  constructor(
+    uint8 _decimals,
+    int256 _initialAnswer
+  ) public {
     decimals = _decimals;
     updateAnswer(_initialAnswer);
   }
 
-  function updateAnswer(int256 _answer) public {
+  function updateAnswer(
+    int256 _answer
+  ) public {
     latestAnswer = _answer;
     latestTimestamp = block.timestamp;
     latestRound++;
@@ -63,7 +68,13 @@ contract MockV3Aggregator is AggregatorV2V3Interface {
       uint80 answeredInRound
     )
   {
-    return (_roundId, getAnswer[_roundId], getStartedAt[_roundId], getTimestamp[_roundId], _roundId);
+    return (
+      _roundId,
+      getAnswer[_roundId],
+      getStartedAt[_roundId],
+      getTimestamp[_roundId],
+      _roundId
+    );
   }
 
   function latestRoundData()
@@ -87,7 +98,15 @@ contract MockV3Aggregator is AggregatorV2V3Interface {
     );
   }
 
-  function description() external pure override returns (string memory) {
-    return "v0.8/tests/MockV3Aggregator.sol";
+  function description()
+    external
+    view
+    override
+    returns (string memory)
+  {
+    return "v0.6/tests/MockV3Aggregator.sol";
   }
 }
+
+// MockOracle
+// Function signatures, event signatures, log topics
