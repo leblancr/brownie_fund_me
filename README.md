@@ -22,3 +22,8 @@ brownie networks add development mainnet-fork-dev cmd=ganache-cli host=http://12
 To add the mainnet fork from alchemy:
 brownie networks add development mainnet-fork-dev cmd=ganache-cli host=http://127.0.0.1 fork=https://eth-mainnet.g.alchemy.com/v2/-FVBjH6Xp6BITC8PMzPz8OeX03DfLt9U accounts=10 mnemonic=brownie port=8545
 
+tests must pass on:
+1. brownie ganache chain with mocks
+2. testnet
+3. brownie mainnet-fork optional
+4. custom mainnet-fork optional
