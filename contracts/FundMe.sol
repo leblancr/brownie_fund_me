@@ -21,49 +21,62 @@ contract FundMe {
     mapping(address => uint256) public addressToAmountFunded;
     address[] public funders;  // array of addresses who deposited
     address public owner;  //address of the owner (who deployed the contract)
-    AggregatorV3Interface public priceFeed;
+    AggregatorV3Interface public priceFeed;  //
 
-    // the first person to deploy the contract is
-    // the owner
-    constructor() public {
-        priceFeed = AggregatorV3Interface(0x694AA1769357215DE4FAC081bf1f309aDC325306);
+    // the first person to deploy the contract is the owner
+    // 0x694AA1769357215DE4FAC081bf1f309aDC325306
+    constructor(address _priceFeed) public {
+        priceFeed = AggregatorV3Interface(_priceFeed);
         owner = msg.sender;
     }
 
-    function fund() public payable {
+    //
+    function fund() public payable returns (address[] memory){
         // 18 digit number to be compared with donated amount
-        uint256 minimumUSD = 50 * 10**18;
-        //is the donated amount less than 50USD?
-        require(
-            getConversionRate(msg.value) >= minimumUSD,
-            "You need to spend more ETH!"
-        );
-        //if not, add to mapping and funders array
+        uint256 minimumUSD = 50 * 10**10;
+        // is the donated amount less than 50 USD?
+        // msg.value = 5000 00000000 0000000000
+        // minimumUSD = 50 0000000000
+        require(getConversionRate(msg.value) >= minimumUSD,
+                "You need to spend more ETH! {msg.value}");
+
+        // add to mapping and funders array
         addressToAmountFunded[msg.sender] += msg.value;
         funders.push(msg.sender);
+        return funders;  // it returns a transaction?
     }
 
-    //function to get the version of the chainlink pricefeed
-    function getVersion() public view returns (uint256) {
-        return priceFeed.version();
+     // ethAmount = msg.value
+    function getConversionRate(uint256 ethAmount) public view returns (uint256) {
+        // require(ethAmount > 5000000000000000000000, "ethAmount not greater than 0");
+        // ethAmount = 5000 00000000 0000000000
+        uint256 ethPrice = getPrice();  // around 1850 00000000 0000000000
+//         require(ethPrice > 1850 00000000 0000000000,
+//                 "ethPrice less than");
+        // ethPrice ~ 1850, ethAmount ~ 5000
+        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1000000000000000000;
+        // the actual ETH/USD conversation rate, after adjusting the extra 0s.
+        return ethAmountInUsd;  //  ~ 1850 * 5000
+    }
+
+    //
+    function getEntranceFee() public view returns (uint256) {
+        // minimumUSD
+        uint256 minimumUSD = 50 * 10**18;  // 50 0000000000
+        uint256 price = getPrice();  // around 1850 00000000 0000000000
+        uint256 precision = 1 * 10**18;
+        return (minimumUSD * precision) / price + 1;
     }
 
     function getPrice() public view returns (uint256) {
-        (, int256 answer, , , ) = priceFeed.latestRoundData();
+        (, int256 answer, , , ) = priceFeed.latestRoundData();  // Eth price from aggregator
         // ETH/USD rate in 18 digit
         return uint256(answer * 10000000000);
     }
 
-    // 1000000000
-    function getConversionRate(uint256 ethAmount)
-        public
-        view
-        returns (uint256)
-    {
-        uint256 ethPrice = getPrice();
-        uint256 ethAmountInUsd = (ethPrice * ethAmount) / 1000000000000000000;
-        // the actual ETH/USD conversation rate, after adjusting the extra 0s.
-        return ethAmountInUsd;
+   // function to get the version of the chainlink pricefeed
+    function getVersion() public view returns (uint256) {
+        return priceFeed.version();
     }
 
     //modifier: https://medium.com/coinmonks/solidity-tutorial-all-about-modifiers-a86cf81c14cb
@@ -75,8 +88,7 @@ contract FundMe {
     }
 
     // onlyOwner modifer will first check the condition inside it
-    // and
-    // if true, withdraw function will be executed
+    // and if true, withdraw function will be executed. owner of what?
     function withdraw() public payable onlyOwner {
         // msg.sender.transfer(address(this).balance);
         address payable recipient = payable(msg.sender);
